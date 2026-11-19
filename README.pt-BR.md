@@ -19,6 +19,9 @@
 
 ## O problema
 
+Minha máquina de vez em quando travava, ou ficava sem disco, e o culpado não
+era nenhum programa pesado: era o scratchpad dos agentes de IA.
+
 Agentes de IA que programam geram muito arquivo temporário: clones de teste,
 builds descartáveis, downloads, saídas intermediárias, scripts de sondagem.
 Eles guardam isso em um de dois lugares, e os dois dão errado.
@@ -27,8 +30,8 @@ Eles guardam isso em um de dois lugares, e os dois dão errado.
 gravado ali ocupa memória e, sem swap, o kernel não devolve essa memória até
 alguém apagar o arquivo. Agentes quase nunca limpam. Deixe uma dúzia de
 sessões abertas por alguns dias e gigabytes de clones esquecidos e arquivos
-`cc*.s` ficam na RAM ao lado dos próprios agentes, até a memória acabar e o
-OOM killer começar a matar processos.
+`cc*.s` ficam na RAM ao lado dos próprios agentes, até a memória acabar e a
+máquina travar, ou o OOM killer começar a matar processos.
 
 **`~/.cache` é disco, para sempre.** Mandar os agentes para uma pasta no disco
 resolve a RAM e cria o problema oposto: nada expira, e o lixo se acumula até

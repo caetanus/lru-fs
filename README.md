@@ -19,6 +19,9 @@
 
 ## The problem
 
+My workstation kept freezing, or running out of disk, and the cause wasn't
+any heavy program: it was the scratchpads of AI agents.
+
 AI coding agents produce a lot of scratch: test clones, throwaway builds,
 downloads, intermediate outputs, probe scripts. They put it in one of two
 places, and both go wrong.
@@ -27,8 +30,8 @@ places, and both go wrong.
 there takes memory, and without swap the kernel can't give it back until
 someone deletes the file. Agents rarely clean up. Leave a dozen sessions open
 for a few days and gigabytes of forgotten clones and `cc*.s` files sit in RAM
-next to the agents themselves, until memory runs out and the OOM killer
-starts picking processes.
+next to the agents themselves, until memory runs out and the machine
+freezes or the OOM killer starts picking processes.
 
 **`~/.cache` is disk, forever.** Pointing agents at a disk directory fixes RAM
 and creates the opposite problem: nothing ever expires, so the junk piles up
