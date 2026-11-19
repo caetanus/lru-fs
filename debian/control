@@ -1,0 +1,21 @@
+Source: lru-fs
+Section: utils
+Priority: optional
+Maintainer: Marcelo A Caetano <rockristao@gmail.com>
+Build-Depends: debhelper-compat (= 13), libfuse3-dev, pkgconf | pkg-config
+Standards-Version: 4.6.2
+Homepage: https://github.com/caetanus/lru-fs
+Rules-Requires-Root: no
+
+Package: lru-fs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, fuse3
+Description: scratch filesystem: recently used files in RAM, the rest on disk
+ lru-fs is a FUSE filesystem for scratch space (AI agents, builds, test
+ clones, temporary downloads). Files live as plain files in a RAM tier
+ (tmpfs) and a disk tier: recently used ones stay in RAM up to a budget,
+ the rest move to disk, files untouched for a few days are deleted, and a
+ size cap or minimum free space trims the least recently used first.
+ .
+ Ships a systemd user unit that mounts ~/scratch:
+   systemctl --user enable --now lru-fs

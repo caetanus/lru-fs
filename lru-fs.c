@@ -19,6 +19,9 @@
  *   g_lock     — the index, the LRU list and the ram accounting.
  */
 #define FUSE_USE_VERSION 31
+#ifndef LRUFS_VERSION
+#define LRUFS_VERSION "dev"
+#endif
 #define _GNU_SOURCE
 
 #include <fuse.h>
@@ -1959,7 +1962,7 @@ static void load_tiers(void)
 struct raw_opts {
 	char *ram_dir, *disk_dir, *ram_limit, *max_file, *max_size, *min_free, *ttl,
 		*promote_window, *scan_interval;
-	int noflush, verbose, help;
+	int noflush, verbose, help, version;
 };
 
 #define STR(t, f) { t, offsetof(struct raw_opts, f), 0 }
@@ -1979,6 +1982,8 @@ static const struct fuse_opt opt_spec[] = {
 	FLAG("verbose", verbose),
 	FLAG("-h", help),
 	FLAG("--help", help),
+	FLAG("-V", version),
+	FLAG("--version", version),
 	FUSE_OPT_END
 };
 
@@ -2107,6 +2112,10 @@ int main(int argc, char *argv[])
 	struct raw_opts o = { 0 };
 	if (fuse_opt_parse(&args, &o, opt_spec, opt_proc) < 0)
 		return 1;
+	if (o.version) {
+		printf("lru-fs %s\n", LRUFS_VERSION);
+		return 0;
+	}
 	if (o.help) {
 		usage(argv[0]);
 		fuse_opt_add_arg(&args, "-ho");

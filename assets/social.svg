@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="640" viewBox="0 0 1280 640">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16213a"/>
+      <stop offset="1" stop-color="#0a0f1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <image x="80" y="120" width="400" height="400" xlink:href="icon.png"/>
+  <g font-family="Noto Sans, DejaVu Sans, sans-serif" fill="#e8eef9">
+    <text x="540" y="250" font-size="104" font-weight="700">lru-fs</text>
+    <text x="544" y="318" font-size="38" fill="#ffb347">scratch space for AI agents</text>
+    <text x="544" y="392" font-size="31" fill="#c4cfe3">recently used files in RAM · the rest on disk</text>
+    <text x="544" y="438" font-size="31" fill="#c4cfe3">files nobody touched for 5 days are wiped</text>
+    <text x="544" y="520" font-size="28" fill="#5ec8f2">github.com/caetanus/lru-fs</text>
+  </g>
+</svg>

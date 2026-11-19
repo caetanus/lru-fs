@@ -1,0 +1,79 @@
+name: packages
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  versions:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every packaging file carries the same version
+        run: |
+          v=$(sed -n 's/^VERSION := //p' Makefile)
+          deb=$(sed -n '1s/^lru-fs (\([^)-]*\).*/\1/p' debian/changelog)
+          rpm=$(sed -n 's/^Version:[[:space:]]*//p' packaging/rpm/lru-fs.spec)
+          aur=$(sed -n 's/^pkgver=//p' packaging/aur/PKGBUILD)
+          echo "Makefile=$v debian=$deb rpm=$rpm aur=$aur tag=${GITHUB_REF_NAME}"
+          test "$v" = "$deb" && test "$v" = "$rpm" && test "$v" = "$aur"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then test "v$v" = "$GITHUB_REF_NAME"; fi
+
+  deb:
+    needs: versions
+    runs-on: ubuntu-24.04
+    # built on the oldest supported base so the .deb installs on Ubuntu 22.04+ / Debian 12+
+    container: ubuntu:22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends build-essential debhelper libfuse3-dev pkgconf
+      - run: dpkg-buildpackage -us -uc -b
+      - run: mkdir dist && mv ../lru-fs_*.deb dist/ && dpkg-deb --info dist/*.deb && dpkg-deb --contents dist/*.deb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb
+          path: dist/*.deb
+
+  rpm:
+    needs: versions
+    runs-on: ubuntu-24.04
+    container: fedora:latest
+    steps:
+      - run: dnf install -y git rpm-build gcc make pkgconf-pkg-config fuse3-devel systemd-rpm-macros
+      - uses: actions/checkout@v4
+      - run: |
+          git config --global --add safe.directory "$PWD"
+          v=$(sed -n 's/^Version:[[:space:]]*//p' packaging/rpm/lru-fs.spec)
+          mkdir -p ~/rpmbuild/SOURCES dist
+          git archive --format=tar.gz --prefix="lru-fs-$v/" -o ~/rpmbuild/SOURCES/lru-fs-$v.tar.gz HEAD
+          rpmbuild -bb packaging/rpm/lru-fs.spec
+          cp ~/rpmbuild/RPMS/*/lru-fs-$v-*.rpm dist/
+          rpm -qlp dist/*.rpm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rpm
+          path: dist/*.rpm
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: [deb, rpm]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Attach packages to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -l dist
+          gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "lru-fs $GITHUB_REF_NAME" --generate-notes
+          gh release upload "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --clobber
