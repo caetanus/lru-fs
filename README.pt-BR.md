@@ -89,11 +89,29 @@ direto.
 Os pacotes instalam o binário e uma unit de **usuário** do systemd que monta
 `~/scratch`. Cada usuário liga para si.
 
-**Arch Linux / Manjaro (AUR)**
+**Arch Linux / Manjaro**: o pacote no AUR sai em breve. Até lá, compile com o
+PKGBUILD deste repositório (precisa de `base-devel` e `git`):
 
 ```sh
-yay -S lru-fs        # ou: paru -S lru-fs
+git clone https://github.com/caetanus/lru-fs
+cd lru-fs/packaging/aur && makepkg -si
 ```
+
+Quando estiver no AUR: `yay -S lru-fs` (ou `paru -S lru-fs`).
+
+**Omarchy**: o Omarchy é Arch por baixo, então os passos acima valem. Hoje,
+no terminal:
+
+```sh
+git clone https://github.com/caetanus/lru-fs
+cd lru-fs/packaging/aur && makepkg -si
+systemctl --user enable --now lru-fs
+```
+
+Quando estiver no AUR, instale pelo menu do Omarchy
+(`Super + Alt + Space` → *Install → AUR* → `lru-fs`) ou com `yay -S lru-fs`,
+e ligue a unit como acima. Depois aponte seus agentes para lá (veja
+[Apontar as ferramentas para lá](#apontar-as-ferramentas-para-lá)).
 
 **Debian / Ubuntu** (Ubuntu 22.04+, Debian 12): baixe o `.deb` em
 [Releases](https://github.com/caetanus/lru-fs/releases) e rode

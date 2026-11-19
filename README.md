@@ -88,11 +88,29 @@ stopped, you can still read everything directly.
 Packages install the binary and a systemd **user** unit that mounts
 `~/scratch`. Each user turns it on for themselves.
 
-**Arch Linux / Manjaro (AUR)**
+**Arch Linux / Manjaro**: AUR package coming soon. Until then, build it with
+the PKGBUILD in this repo (needs `base-devel` and `git`):
 
 ```sh
-yay -S lru-fs        # or: paru -S lru-fs
+git clone https://github.com/caetanus/lru-fs
+cd lru-fs/packaging/aur && makepkg -si
 ```
+
+Once it's on the AUR: `yay -S lru-fs` (or `paru -S lru-fs`).
+
+**Omarchy**: Omarchy is Arch underneath, so the steps above apply. Today,
+in a terminal:
+
+```sh
+git clone https://github.com/caetanus/lru-fs
+cd lru-fs/packaging/aur && makepkg -si
+systemctl --user enable --now lru-fs
+```
+
+Once it's on the AUR, install it from the Omarchy menu instead
+(`Super + Alt + Space` → *Install → AUR* → `lru-fs`) or with `yay -S lru-fs`,
+then enable the unit as above. Point your agents at it (see
+[Point your tools at it](#point-your-tools-at-it)).
 
 **Debian / Ubuntu** (Ubuntu 22.04+, Debian 12): download the `.deb` from
 [Releases](https://github.com/caetanus/lru-fs/releases), then
