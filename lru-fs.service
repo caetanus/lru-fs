@@ -1,0 +1,16 @@
+[Unit]
+Description=lru-fs scratch filesystem (hot files in RAM, cold on disk, auto-wipe)
+
+[Service]
+Type=simple
+# options go in ~/.config/lru-fs.conf, e.g.  LRUFS_ARGS=-o wipe=3d,max_size=50G
+EnvironmentFile=-%h/.config/lru-fs.conf
+ExecStartPre=/usr/bin/mkdir -p %h/scratch
+ExecStart=%h/.local/bin/lru-fs -f %h/scratch $LRUFS_ARGS
+ExecStop=/usr/bin/fusermount3 -u -z %h/scratch
+# on stop, ram files are copied to disk (up to ram_limit)
+TimeoutStopSec=120
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
