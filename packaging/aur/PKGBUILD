@@ -9,7 +9,7 @@ license=('MIT')
 depends=('fuse3' 'glibc')
 makedepends=('pkgconf')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
-sha256sums=('SKIP')
+sha256sums=('998660ecae47b80484f5beb41601b23b599c286cbd8541cbd38f47eec149f0ca')
 
 build() {
   cd "$pkgname-$pkgver"
